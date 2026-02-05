@@ -1,7 +1,8 @@
 from ctypes import *
+import subprocess
 import os
 import argparse
-from terminalDraw import draw_stack_box
+from memoryBox import draw_stack_box
 # Attach to any PID, read the stack and heap to visualize the memory in a teaching friendly way.
 
 parser = argparse.ArgumentParser(
@@ -10,6 +11,7 @@ parser = argparse.ArgumentParser(
 )
 
 parser.add_argument("-p", "--pid")
+parser.add_argument("-b", "--binary")
 args = parser.parse_args()
 
 
@@ -48,11 +50,16 @@ class UserRegsStruct(Structure):
         ("ds", c_uint64), ("es", c_uint64), ("fs", c_uint64), ("gs", c_uint64)
     ]
 
+if args.pid:
+    pid = int(args.pid)
+elif args.binary:
+    # spawn binary?
+    process = subprocess.Popen([args.binary])
+    print(process.pid)
+    pid = process.pid
 
-pid = int(args.pid)
 if ptrace(PTRACE_ATTACH, pid, 0, 0) < 0:
     raise OSError("ptrace attach failed")
-
 status = c_int(0)
 waitpid(pid, byref(status), 0)
 while not WIFSTOPPED(status.value):
@@ -61,11 +68,11 @@ while not WIFSTOPPED(status.value):
 print("Attached to process")
 
 regs = UserRegsStruct()
-regs = UserRegsStruct()
+
 if ptrace(PTRACE_GETREGS, pid, 0, addressof(regs)) < 0:
     raise OSError("ptrace GETREGS failed")
-print(f"Instruction pointer:    0x{regs.rip:x}")
-print(f"Stack pointer:          0x{regs.rsp:x}")
+print(f"Instruction pointer:\t\t0x{regs.rip:x}")
+print(f"Stack pointer:\t\t\t0x{regs.rsp:x}")
 
 
 def parse_maps(pid):
@@ -80,7 +87,7 @@ def locate_stack(maps_arr: list[str]):
         if "[stack]" in memSection:
             stack_start = memSection.split(" ")[0].split("-")[0]
             stack_end = memSection.split(" ")[0].split("-")[1]
-            print(f"Stack found at: {stack_start}")
+            print(f"Stack found at:\t\t\t{stack_start}")
             return [c_void_p(int(stack_start, 16)), c_void_p(int(stack_end, 16))]
     return 0
 
@@ -126,6 +133,10 @@ stackStruct = StackStructure()
 stack_value = ptrace_read_at(pid, c_void_p(regs.rsp))
 stackStruct.add_stack_value(convert_void_pointer_addr(c_void_p(regs.rsp)), stack_value)
 stack_value = ptrace_read_at(pid, c_void_p(c_void_p(regs.rsp).value+8))
-stackStruct.add_stack_value(convert_void_pointer_addr(c_void_p(regs.rsp)), stack_value)
+stackStruct.add_stack_value(convert_void_pointer_addr(c_void_p(c_void_p(regs.rsp).value+8)), stack_value)
 
 stackStruct.print_stack_values()
+
+# Terminate if we spawned the binary
+if process:
+    process.kill()

@@ -1,5 +1,3 @@
-
-
 def draw_stack_box(addr, value):
     block_char = "|"
     line_char = "-"
@@ -26,7 +24,7 @@ def draw_stack_box(addr, value):
 
 
     value_start = int((width_chars/3))
-    print(valueIsLongest)
+
     ### Header and footer
     if len_diff != 0 and valueIsLongest:
         header_blocks = line_char*(int(header_width_chars/3)+int(len_diff/2))
@@ -61,7 +59,7 @@ def draw_stack_box(addr, value):
         box_line += filler_line + "\n"
     print(box_line)
 
-draw_stack_box("0x12341234","0x23452345")
+# draw_stack_box("0x12341234","0x23452345")
 
-draw_stack_box("0x4356738222222","0x23452345")
-draw_stack_box("0x43567382","0x2345234555555")
+# draw_stack_box("0x4356738222222","0x23452345")
+# draw_stack_box("0x43567382","0x2345234555555")
