@@ -1,4 +1,4 @@
-from . import prettyPrint
+from . import prettyPrint as pprint
 
 def draw_stack_box(addr, value):
     block_char = "|"
@@ -59,9 +59,9 @@ def draw_stack_box(addr, value):
             box_line += value_first + str(value) + value_second + "\n"
             continue
         box_line += filler_line + "\n"
-    print(prettyPrint.start_color("red"))
+    print(pprint.start_color("red"))
     print(box_line)
-    print(prettyPrint.end_color())
+    print(pprint.end_color())
 
 # draw_stack_box("0x12341234","0x23452345")
 

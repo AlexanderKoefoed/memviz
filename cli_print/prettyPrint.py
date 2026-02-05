@@ -1,5 +1,3 @@
-
-
 # Non-comprehensive list of colors ANSI colors.
 
 COLORS = {
