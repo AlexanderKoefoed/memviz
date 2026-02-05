@@ -1,8 +1,9 @@
 from ctypes import *
 import subprocess
-import os
+import sys
 import argparse
-from memoryBox import draw_stack_box
+from cli_print.memoryBox import draw_stack_box
+import cli_print.prettyPrint as pprint
 # Attach to any PID, read the stack and heap to visualize the memory in a teaching friendly way.
 
 parser = argparse.ArgumentParser(
@@ -14,6 +15,11 @@ parser.add_argument("-p", "--pid")
 parser.add_argument("-b", "--binary")
 args = parser.parse_args()
 
+if not len(sys.argv) > 1:
+    parser.print_help()
+    exit(1)
+
+pprint.print_welcome()
 
 libc = cdll.LoadLibrary("libc.so.6")
 
@@ -55,7 +61,6 @@ if args.pid:
 elif args.binary:
     # spawn binary?
     process = subprocess.Popen([args.binary])
-    print(process.pid)
     pid = process.pid
 
 if ptrace(PTRACE_ATTACH, pid, 0, 0) < 0:
@@ -65,14 +70,14 @@ waitpid(pid, byref(status), 0)
 while not WIFSTOPPED(status.value):
     waitpid(pid, byref(status), 0)
 
-print("Attached to process")
+print(pprint.print_success(f"Attached to process: {pid}"))
 
 regs = UserRegsStruct()
 
 if ptrace(PTRACE_GETREGS, pid, 0, addressof(regs)) < 0:
     raise OSError("ptrace GETREGS failed")
-print(f"Instruction pointer:\t\t0x{regs.rip:x}")
-print(f"Stack pointer:\t\t\t0x{regs.rsp:x}")
+print(pprint.print_info(f"Instruction pointer:\t\t0x{regs.rip:x}"))
+print(pprint.print_info(f"Stack pointer:\t\t\t0x{regs.rsp:x}"))
 
 
 def parse_maps(pid):
@@ -87,7 +92,7 @@ def locate_stack(maps_arr: list[str]):
         if "[stack]" in memSection:
             stack_start = memSection.split(" ")[0].split("-")[0]
             stack_end = memSection.split(" ")[0].split("-")[1]
-            print(f"Stack found at:\t\t\t{stack_start}")
+            print(pprint.print_info(f"Stack found at:\t\t\t{stack_start}"))
             return [c_void_p(int(stack_start, 16)), c_void_p(int(stack_end, 16))]
     return 0
 
@@ -124,9 +129,9 @@ class StackStructure:
                 draw_stack_box(obj["position"], obj["value"])
                 # print(f"Value: {obj["value"]} at position: {obj["position"]}")
             return 1
-        print("No stack values parsed")
+        print(pprint.print_error("No stack values parsed"))
         return 0
-    
+
 
 stackStruct = StackStructure()
 
