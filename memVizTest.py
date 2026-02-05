@@ -1,6 +1,7 @@
 from ctypes import *
 import os
 import argparse
+from terminalDraw import draw_stack_box
 # Attach to any PID, read the stack and heap to visualize the memory in a teaching friendly way.
 
 parser = argparse.ArgumentParser(
@@ -98,8 +99,7 @@ def read_stack_n(pid, start_addr, n_bytes):
 # Might not be necessary. We just use the stack pointer to start parsing the stack
 maps = parse_maps(pid)
 stack = locate_stack(maps)
-# for memSection in maps:
-#     print(memSection, end="")
+
 
 class StackStructure:
     def __init__(self):
@@ -114,7 +114,8 @@ class StackStructure:
     def print_stack_values(self):
         if len(self.value_array) > 0:
             for obj in self.value_array:
-                print(f"Value: {obj["value"]} at position: {obj["position"]}")
+                draw_stack_box(obj["position"], obj["value"])
+                # print(f"Value: {obj["value"]} at position: {obj["position"]}")
             return 1
         print("No stack values parsed")
         return 0

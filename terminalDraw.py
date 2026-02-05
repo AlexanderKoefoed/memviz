@@ -62,3 +62,6 @@ def draw_stack_box(addr, value):
     print(box_line)
 
 draw_stack_box("0x12341234","0x23452345")
+
+draw_stack_box("0x4356738222222","0x23452345")
+draw_stack_box("0x43567382","0x2345234555555")
