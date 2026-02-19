@@ -15,6 +15,10 @@ Also as a challenge to myself, this project will be built without depending on t
 - cmdParser needs to take commands from users.
 - Interactive CLI tool. Take commands from users in cmdParser.py.
 
+## Ideas
+
+- Allow for input of a payload which is then used through exploration of memory layout. User give an offset, then the payload is laid out next to actual memory and viewed.
+- After confirmation that the payload is lined up correctly, execute it. Might be hard for complex payloads, but cool for intro level buffer overflows.
 
 ### user input
 
