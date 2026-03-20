@@ -3,7 +3,7 @@ import subprocess
 import sys
 import argparse
 from parser import memoryParser as mp
-from cli_print import prettyPrint as pprint
+from tui import prettyPrint as pprint
 
 if __name__ == "__main__":
 

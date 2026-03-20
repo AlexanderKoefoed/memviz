@@ -1,4 +1,5 @@
 # Non-comprehensive list of colors ANSI colors.
+from .windowUtils import get_window_size
 
 COLORS = {
     "reset"     : "\033[0m",
@@ -39,7 +40,7 @@ def print_error(error_string):
     return f"{COLORS['b_red']}[ERROR]: {error_string} {COLORS["reset"]}"
 
 def print_welcome():
-    welcome = r"""
+    welcome_large = r"""
 Welcome to
 __/\\\\____________/\\\\_____________________________________/\\\________/\\\_____________________        
  _\/\\\\\\________/\\\\\\____________________________________\/\\\_______\/\\\_____________________       
@@ -50,7 +51,25 @@ __/\\\\____________/\\\\_____________________________________/\\\________/\\\___
       _\/\\\_____________\/\\\_\//\\///////___\/\\\__\/\\\__\/\\\_____\//\\\\\______\/\\\____/\\\/______  
        _\/\\\_____________\/\\\__\//\\\\\\\\\\_\/\\\__\/\\\__\/\\\______\//\\\_______\/\\\__/\\\\\\\\\\\_ 
         _\///______________\///____\//////////__\///___\///___\///________\///________\///__\///////////__
+
 Author: Alexander Koefoed
+----------------------------------------------------------------------------------------------------------
     """
-    print(f"{COLORS['b_magenta']} \n {welcome} \n {COLORS['reset']}")
+    welcome_small = r"""
+Welcome to
+
+MM   MM MMMMMMM MM   MM M         M MM MMMMMMM
+M M M M M       M M M M  M       M          M
+M  M  M MMMMMMM M  M  M   M     M   MM     M
+M     M M       M     M    M   M    MM    M
+M     M M       M     M     M M     MM   M
+M     M MMMMMMM M     M      M      MM MMMMMMM
+
+Author: Alexander Koefoed
+-----------------------------------------------
+"""
+    if get_window_size()[0] < 106:
+        print(f"{COLORS['b_magenta']} \n {welcome_small} \n {COLORS['reset']}")
+        return 0
+    print(f"{COLORS['b_magenta']} \n {welcome_large} \n {COLORS['reset']}")
     return 0

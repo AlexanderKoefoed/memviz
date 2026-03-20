@@ -1,6 +1,6 @@
 from ctypes import *
-from cli_print.memoryBox import draw_stack_box
-import cli_print.prettyPrint as pprint
+from tui.memoryBox import draw_stack_box
+import tui.prettyPrint as pprint
 
 libc = cdll.LoadLibrary("libc.so.6")
 
@@ -68,7 +68,7 @@ def attach_ptrace(pid):
 
 def init_registers(pid):
     regs = UserRegsStruct()
-
+    
     if ptrace(PTRACE_GETREGS, pid, 0, addressof(regs)) < 0:
         raise OSError("ptrace GETREGS failed")
     print(pprint.print_info(f"Instruction pointer:\t\t0x{regs.rip:x}"))
@@ -88,7 +88,7 @@ def locate_stack(maps_arr: list[str]):
         if "[stack]" in memSection:
             stack_start = memSection.split(" ")[0].split("-")[0]
             stack_end = memSection.split(" ")[0].split("-")[1]
-            print(pprint.print_info(f"Stack found at:\t\t\t{stack_start}"))
+            print(pprint.print_info(f"Stack found at:\t\t\t0x{stack_start}"))
             return [c_void_p(int(stack_start, 16)), c_void_p(int(stack_end, 16))]
     return 0
 
