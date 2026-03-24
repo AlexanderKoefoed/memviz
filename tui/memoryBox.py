@@ -59,9 +59,9 @@ def draw_stack_box(addr, value):
             box_line += value_first + str(value) + value_second + "\n"
             continue
         box_line += filler_line + "\n"
-    print(pprint.start_color("red"))
+    pprint.start_color("red")
     print(box_line)
-    print(pprint.end_color())
+    pprint.end_color()
 
 # draw_stack_box("0x12341234","0x23452345")
 

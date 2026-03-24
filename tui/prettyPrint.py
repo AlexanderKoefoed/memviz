@@ -22,22 +22,22 @@ COLORS = {
 }
 
 def start_color(color):
-    return f"{COLORS[color]}"
+    print(f"{COLORS[color]}")
 
 def end_color():
-    return f"{COLORS["reset"]}"
+    print(f"{COLORS["reset"]}")
 
 def print_color(data_to_print, color_to_print):
-    return f"{COLORS[color_to_print]}{data_to_print} {COLORS["reset"]}"
+    print(f"{COLORS[color_to_print]}{data_to_print} {COLORS["reset"]}")
 
-def print_info(info_string):
-    return f"{COLORS['cyan']}[INFO]: {info_string} {COLORS["reset"]}"
+def print_info(info_string: str, string_value: str, tabs = 3):
+    print(f"{COLORS['cyan']}[INFO]: {info_string} {"\t"*tabs} {string_value} {COLORS["reset"]}")
 
 def print_success(success_string):
-    return f"{COLORS['green']}[INFO]: {success_string} {COLORS["reset"]}"
+    print(f"{COLORS['green']}[INFO]: {success_string} {COLORS["reset"]}")
 
 def print_error(error_string):
-    return f"{COLORS['b_red']}[ERROR]: {error_string} {COLORS["reset"]}"
+    print(f"{COLORS['b_red']}[ERROR]: {error_string} {COLORS["reset"]}")
 
 def print_welcome():
     welcome_large = r"""

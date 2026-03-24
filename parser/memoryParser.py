@@ -65,14 +65,27 @@ def attach_ptrace(pid):
     while not WIFSTOPPED(status.value):
         waitpid(pid, byref(status), 0)
 
+def ptrace_cont(pid):
+    ret = ptrace(PTRACE_CONT, pid, 0, 0)
+    if ret < 0:
+        return ret
+    status = c_int(0)
+    waitpid(pid, byref(status), 0)
+    return ret
+
+def insert_breakpoint(pid, addr):
+    status = c_int(0)
+    # Insert a breakpoint as in Luadbg (replace the last part of instruction with "trap" CC)
+    waitpid(pid, byref(status), 0)
+    print("hej")
 
 def init_registers(pid):
     regs = UserRegsStruct()
     
     if ptrace(PTRACE_GETREGS, pid, 0, addressof(regs)) < 0:
         raise OSError("ptrace GETREGS failed")
-    print(pprint.print_info(f"Instruction pointer:\t\t0x{regs.rip:x}"))
-    print(pprint.print_info(f"Stack pointer:\t\t\t0x{regs.rsp:x}"))
+    pprint.print_info(f"Instruction pointer: ", f"0x{regs.rip:x}",  tabs=2)
+    pprint.print_info(f"Stack pointer: ", f"0x{regs.rsp:x}", tabs=2)
     return regs
 
 
@@ -88,7 +101,6 @@ def locate_stack(maps_arr: list[str]):
         if "[stack]" in memSection:
             stack_start = memSection.split(" ")[0].split("-")[0]
             stack_end = memSection.split(" ")[0].split("-")[1]
-            print(pprint.print_info(f"Stack found at:\t\t\t0x{stack_start}"))
             return [c_void_p(int(stack_start, 16)), c_void_p(int(stack_end, 16))]
     return 0
 
